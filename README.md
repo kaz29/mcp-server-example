@@ -1,10 +1,18 @@
-# Simple MCP Server
+# NestJS MCP Server
 
-MCPの学習用に作成したシンプルなサーバーです。基本的な機能を理解するための5つのツールを提供します。
+NestJSを使用したModel Context Protocol (MCP)サーバーの実装サンプルです。
+DDD/クリーンアーキテクチャを適用しやすい構造で、今後のMCP開発のベースとして利用できます。
 
-**このサーバーはStreamable HTTPトランスポート（最新のMCP仕様）を使用して、HTTPサーバーとして起動し、クライアントから接続する形式です。**
+## 🎯 特徴
 
-## 提供する機能
+- **NestJS**: エンタープライズグレードのフレームワーク
+- **デコレーターベース**: `@Tool`デコレーターで簡潔にツールを定義
+- **レイヤー分離**: サービス層とツール層を分離（DDD適用可能）
+- **依存性注入**: テスタブルで保守性の高い設計
+- **Streamable HTTP**: 最新のMCP仕様に対応
+- **Zod**: 型安全なパラメータバリデーション
+
+## 📦 提供する機能
 
 1. **get_current_time** - 現在の日時を取得
 2. **calculate** - 四則演算（加算、減算、乗算、除算）
@@ -12,7 +20,7 @@ MCPの学習用に作成したシンプルなサーバーです。基本的な�
 4. **get_note** - メモの取得
 5. **list_notes** - 保存されたメモの一覧表示
 
-## セットアップ手順
+## 🚀 セットアップ
 
 ### 1. 依存関係のインストール
 
@@ -26,133 +34,208 @@ npm install
 npm run build
 ```
 
-### 3. MCPサーバーの起動
-
-**重要：VSCodeから使う前に、まずサーバーを起動しておく必要があります。**
-
-新しいターミナルウィンドウで以下を実行：
+### 3. サーバーの起動
 
 ```bash
 npm start
 ```
 
-または起動スクリプトを使用：
-
-```bash
-./start-server.sh
-```
-
 サーバーが起動すると、以下のように表示されます：
+
 ```
-Simple MCP Server (Streamable HTTP) が http://localhost:3000 で起動しました
-MCPエンドポイント: http://localhost:3000/mcp
+🚀 NestJS MCP Server running on http://localhost:3000
+📡 MCP Endpoint: http://localhost:3000/mcp
 ```
 
-**サーバーは起動したまま、バックグラウンドで動作し続けます。**
-
-### 4. サーバーの動作確認（オプション）
-
-別のターミナルで以下を実行してサーバーが正常に動作していることを確認できます：
+### 4. テスト実行
 
 ```bash
-curl http://localhost:3000/health
+node test-client.mjs
 ```
 
-### 5. VSCode Copilotへの統合
+## 🏗️ プロジェクト構造
 
-VSCodeの設定ファイル（`settings.json`）に以下を追加します：
+```
+src/
+├── main.ts                          # エントリーポイント
+├── app.module.ts                    # ルートモジュール
+├── mcp/                             # MCPモジュール
+│   ├── mcp.module.ts               # MCP設定・プロバイダー登録
+│   ├── tools/                       # ツール層（MCPインターフェース）
+│   │   ├── time.tool.ts            # 時刻ツール
+│   │   ├── calculator.tool.ts      # 計算ツール
+│   │   └── notes.tool.ts           # メモツール
+│   └── services/                    # サービス層（ビジネスロジック）
+│       ├── time.service.ts
+│       ├── calculator.service.ts
+│       └── notes.service.ts
+└── domain/                          # ドメイン層（将来の拡張用）
+    └── notes/
+        └── (エンティティ、リポジトリなど)
+```
 
-1. VSCodeで `Cmd + Shift + P` を押してコマンドパレットを開く
-2. "Preferences: Open User Settings (JSON)" を選択
-3. 以下の設定を追加：
+## 📝 実装例
 
-```json
-{
-  "github.copilot.chat.mcpServers": {
-    "simple-mcp": {
-      "url": "http://localhost:3000/mcp"
-    }
+### ツール定義（デコレーターベース）
+
+```typescript
+// src/mcp/tools/time.tool.ts
+import { Injectable } from '@nestjs/common';
+import { Tool } from '@rekog/mcp-nest';
+import { z } from 'zod';
+import { TimeService } from '../services/time.service';
+
+@Injectable()
+export class TimeTool {
+  constructor(private readonly timeService: TimeService) {}
+
+  @Tool({
+    name: 'get_current_time',
+    description: '現在の日時を取得します',
+    parameters: z.object({}),
+  })
+  async getCurrentTime() {
+    const time = this.timeService.getCurrentTime();
+    return `現在の日時: ${time}`;
   }
 }
 ```
 
-### 6. VSCodeの再起動
+### サービス層（ビジネスロジック）
 
-設定を反映するため、VSCodeを再起動します。
-
-## 使い方
-
-### 1. サーバーを起動
-
-```bash
-cd /Users/kaz/dev/labo/mcp
-npm start
-```
-
-### 2. VSCodeでMCPツールを使用
-
-VSCode CopilotのチャットでMCPサーバーのツールを使用できます。例：
-
-- 「現在の時刻を教えて」
-- 「123 + 456を計算して」
-- 「"meeting"というキーで"明日14時から会議"というメモを保存して」
-- 「"meeting"のメモを取得して」
-- 「保存されているメモの一覧を表示して」
-
-### 3. サーバーの停止
-
-サーバーを停止するには、サーバーを起動したターミナルで `Ctrl + C` を押します。
-
-## 開発モード
-
-TypeScriptファイルを編集しながら自動ビルドするには：
-
-```bash
-npm run watch
-```
-
-変更後は、サーバーを再起動する必要があります。
-
-## プロジェクト構造
-
-```
-.
-├── src/
-│   └── index.ts          # MCPサーバーのメインコード
-├── build/                # ビルド成果物（自動生成）
-├── package.json          # プロジェクト設定
-├── tsconfig.json         # TypeScript設定
-├── start-server.sh       # サーバー起動スクリプト
-└── README.md            # このファイル
-```
-
-## MCPについて学ぶポイント
-
-このシンプルなMCPサーバーから学べること：
-
-1. **サーバーの基本構造** - MCPサーバーの初期化方法
-2. **ツールの定義** - `ListToolsRequestSchema`でツールを定義する方法
-3. **ツールの実装** - `CallToolRequestSchema`でツールのロジックを実装する方法
-4. **入出力スキーマ** - JSONスキーマを使った入力検証
-5. **エラーハンドリング** - エラーの適切な処理方法
-
-## コードの主要部分の説明
-
-### 1. サーバーの初期化
 ```typescript
-const server = new Server({
-  name: "simple-mcp-server",
-  version: "1.0.0",
-}, {
-  capabilities: { tools: {} },
-});
+// src/mcp/services/time.service.ts
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class TimeService {
+  getCurrentTime(): string {
+    const now = new Date();
+    return now.toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' });
+  }
+}
 ```
 
-### 2. ツールの定義
-`ListToolsRequestSchema`ハンドラーで、利用可能なツールとそのスキーマを定義します。
+### モジュール設定
 
-### 3. ツールの実行
-`CallToolRequestSchema`ハンドラーで、実際のツールのロジックを実装します。
+```typescript
+// src/mcp/mcp.module.ts
+import { Module } from '@nestjs/common';
+import { TimeService } from './services/time.service';
+import { TimeTool } from './tools/time.tool';
 
-### 4. トランスポート
-`StreamableHTTPServerTransport`（最新のMCP SDK）を使用して、HTTP経由でクライアントと通信します。これにより、SSEストリーミングと直接HTTPレスポンスの両方がサポートされます。
+@Module({
+  providers: [
+    // サービス層
+    TimeService,
+    // ツール層
+    TimeTool,
+  ],
+})
+export class McpToolsModule {}
+```
+
+## 🔧 開発
+
+### 開発モード（ホットリロード）
+
+```bash
+npm run start:dev
+```
+
+### ビルドのみ
+
+```bash
+npm run build
+```
+
+## 🎓 学習ポイント
+
+### 1. レイヤー分離
+
+- **ツール層**: MCPプロトコルとのインターフェース（`@Tool`デコレーター）
+- **サービス層**: ビジネスロジック（`@Injectable()`）
+- **ドメイン層**: エンティティ、リポジトリ（将来の拡張）
+
+### 2. 依存性注入
+
+```typescript
+constructor(private readonly timeService: TimeService) {}
+```
+
+コンストラクタインジェクションで疎結合を実現し、テストが容易。
+
+### 3. 型安全なパラメータ
+
+```typescript
+parameters: z.object({
+  operation: z.enum(['add', 'subtract', 'multiply', 'divide']),
+  a: z.number(),
+  b: z.number(),
+})
+```
+
+Zodによる実行時バリデーションとTypeScript型推論。
+
+### 4. MCPモジュール設定
+
+```typescript
+McpModule.forRoot({
+  name: 'nestjs-mcp-server',
+  version: '1.0.0',
+  transport: McpTransportType.STREAMABLE_HTTP,
+  mcpEndpoint: '/mcp',
+})
+```
+
+## 🌟 今後の拡張例
+
+### データベース統合
+
+```typescript
+// TypeORM
+@Module({
+  imports: [
+    TypeOrmModule.forRoot({...}),
+    TypeOrmModule.forFeature([Note]),
+  ],
+})
+
+// Prisma
+@Injectable()
+export class NotesService {
+  constructor(private prisma: PrismaService) {}
+}
+```
+
+### 外部API統合
+
+```typescript
+@Module({
+  imports: [HttpModule],
+})
+
+@Injectable()
+export class ExternalApiService {
+  constructor(private http: HttpService) {}
+}
+```
+
+### 認証・認可
+
+```typescript
+@Tool({...})
+@UseGuards(AuthGuard)
+async protectedTool() {...}
+```
+
+## 📚 参考リンク
+
+- [NestJS Documentation](https://docs.nestjs.com/)
+- [@rekog/mcp-nest](https://github.com/rekog-labs/MCP-Nest)
+- [Model Context Protocol](https://modelcontextprotocol.io/)
+- [Zod Documentation](https://zod.dev/)
+
+## 📄 ライセンス
+
+MIT
