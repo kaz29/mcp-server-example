@@ -45,3 +45,4 @@ next-env.d.ts
 *storybook.log
 dist/
 config/*.pem
+docs/SESSION_SUMMARY.md
