@@ -8,9 +8,19 @@
     "build": "tsc",
     "start": "node dist/main.js",
     "start:dev": "tsc-watch --onSuccess \"node dist/main.js\"",
-    "test": "node test-client.js"
+    "test": "vitest run",
+    "test:watch": "vitest --watch",
+    "test:ui": "vitest --ui",
+    "test:cov": "vitest run --coverage",
+    "test:integration": "vitest run test/integration",
+    "test:e2e": "node test/e2e/test-client.mjs"
   },
-  "keywords": ["mcp", "server", "nestjs", "ddd"],
+  "keywords": [
+    "mcp",
+    "server",
+    "nestjs",
+    "ddd"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
@@ -24,8 +34,13 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@nestjs/testing": "^10.0.0",
     "@types/node": "^22.10.5",
+    "@vitest/coverage-v8": "^2.1.9",
+    "@vitest/ui": "^2.0.0",
     "tsc-watch": "^6.0.4",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vite-tsconfig-paths": "^5.0.0",
+    "vitest": "^2.0.0"
   }
 }
