@@ -16,7 +16,7 @@ DDD/クリーンアーキテクチャを適用しやすい構造で、今後のM
 
 このリポジトリは、学習段階に応じて2つのブランチを提供しています：
 
-### `basic-example` ブランチ（初心者向け）
+### `main` ブランチ（初心者向け）
 
 基本的なMCP実装のサンプルです。以下のシンプルな機能を提供します：
 
@@ -30,10 +30,10 @@ DDD/クリーンアーキテクチャを適用しやすい構造で、今後のM
 - シンプルな実装例から始めたい
 
 ```bash
-git checkout basic-example
+git checkout main
 ```
 
-### `main` ブランチ（実践向け）
+### `four-keys-example` ブランチ（実践向け）
 
 実用的なFour Keys (DORA Metrics) 実装を含む、より本格的なサンプルです。
 
@@ -48,9 +48,14 @@ git checkout basic-example
 - GitHub統合などの外部API連携方法を学びたい
 - テスト戦略やカバレッジ改善の参考にしたい
 
+```bash
+git checkout four-keys-example
+npm install  # GitHub API関連の依存パッケージが追加されるため再インストールが必要
+```
+
 ## 📦 提供する機能
 
-### basic-exampleブランチ
+### mainブランチ
 
 1. **get_current_time** - 現在の日時を取得
 2. **calculate** - 四則演算（加算、減算、乗算、除算）
@@ -58,7 +63,7 @@ git checkout basic-example
 4. **get_note** - メモの取得
 5. **list_notes** - 保存されたメモの一覧表示
 
-### mainブランチ（basic-exampleの機能 + 以下）
+### four-keys-exampleブランチ（mainの機能 + 以下）
 
 #### Four Keys (DORA Metrics) ツール
 
@@ -115,7 +120,7 @@ npm start
 node test-client.mjs
 ```
 
-### 5. mainブランチ用の追加セットアップ
+### 5. four-keys-exampleブランチ用の追加セットアップ
 
 Four Keys機能を使用する場合、GitHub App認証の設定が必要です。
 
@@ -145,7 +150,7 @@ GITHUB_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\n..."
 
 ## 🏗️ プロジェクト構造
 
-### basic-exampleブランチ
+### mainブランチ
 
 ```
 src/
@@ -166,7 +171,7 @@ src/
         └── (エンティティ、リポジトリなど)
 ```
 
-### mainブランチ（追加構造）
+### four-keys-exampleブランチ（追加構造）
 
 ```
 src/
@@ -269,7 +274,7 @@ npm run build
 
 ## 🎓 学習ポイント
 
-### basic-exampleブランチ
+### mainブランチ
 
 #### 1. レイヤー分離
 
@@ -308,7 +313,7 @@ McpModule.forRoot({
 })
 ```
 
-### mainブランチ（追加の学習ポイント）
+### four-keys-exampleブランチ（追加の学習ポイント）
 
 #### 5. 外部API統合（GitHub API）
 
