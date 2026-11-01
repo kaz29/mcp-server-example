@@ -12,6 +12,18 @@ DDD/クリーンアーキテクチャを適用しやすい構造で、今後のM
 - **Streamable HTTP**: 最新のMCP仕様に対応
 - **Zod**: 型安全なパラメータバリデーション
 
+## 🌿 ブランチ構成
+
+| ブランチ | 内容 |
+|---|---|
+| `main`（このブランチ） | 入門向け。時刻・計算・メモのシンプルなツールでMCPの基本を学ぶ |
+| `four-keys-example` | 実践向け。GitHub APIを使った Four Keys (DORA Metrics) の実装 |
+
+```bash
+git checkout four-keys-example
+npm install  # GitHub API関連の依存パッケージが追加されるため再インストールが必要
+```
+
 ## 📦 提供する機能
 
 1. **get_current_time** - 現在の日時を取得
@@ -50,7 +62,8 @@ npm start
 ### 4. テスト実行
 
 ```bash
-node test-client.mjs
+npm test          # 単体テスト
+npm run test:e2e  # サーバー起動中にMCPクライアントから疎通確認
 ```
 
 ## 🏗️ プロジェクト構造

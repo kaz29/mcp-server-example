@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - four-keys-example
   pull_request:
     branches:
       - main
+      - four-keys-example
 
 permissions:
   contents: read
